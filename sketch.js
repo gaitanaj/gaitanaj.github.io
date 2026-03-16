@@ -16,6 +16,11 @@ let menuSpacing = 150;
 // Glow colors per scan
 const glowColors = ["#FF69B4", "#00BFFF", "#7FFF00"];
 
+// Typewriter variables
+let typewriterIndex = 0;
+let typewriterTimer = 0;
+let typewriterSpeed = 2; // frames per character — lower = faster
+
 // City scans
 const cityScans = {
   copenhagen: [
@@ -89,7 +94,7 @@ function setup(){
 // ---- Draw grain ----
 function drawGrain(){
   noStroke();
-  fill(0, 60); // <-- grain opacity here, 0-255
+  fill(0, 60);
   for(let i=0;i<grainDensity;i++){
     let gx = random(width);
     let gy = random(height);
@@ -161,22 +166,6 @@ function drawLoading() {
   }
 }
 
-// ---- Draw star shape ----
-function drawStar(x, y, radius1, radius2, npoints) {
-  let angle = TWO_PI / npoints;
-  let halfAngle = angle/2.0;
-  beginShape();
-  for (let a = 0; a < TWO_PI; a += angle){
-    let sx = x + cos(a) * radius2;
-    let sy = y + sin(a) * radius2;
-    vertex(sx, sy);
-    sx = x + cos(a+halfAngle) * radius1;
-    sy = y + sin(a+halfAngle) * radius1;
-    vertex(sx, sy);
-  }
-  endShape(CLOSE);
-}
-
 // ---- City scan world ----
 function drawCityWorld(){
   if(scans.length===0){
@@ -201,50 +190,69 @@ function drawCityWorld(){
     s.display();
   }
 
+  // Fade panel in/out
   if(panelOpen){
     panelAlpha = lerp(panelAlpha, 255, 0.1);
   } else {
     panelAlpha = lerp(panelAlpha, 0, 0.1);
   }
 
+  // ---- Vintage chat box panel ----
   if(panelAlpha > 5 && selectedScan){
-    let panelX = width - 180;
-    let panelY = 170; // top right corner, with some margin
+    let boxW = 300;
+    let boxH = 160;
+    let boxX = width/2 - boxW/2;
+    let boxY = height/2 - boxH/2;
+    let titleBarH = 26;
+    let cityColor = state === "prague" ? "#f912b8" : "#00eeff";
 
-    // measure text to auto-fit star size
-    textSize(13);
-    let longestLine = max(
-      textWidth("Scan Info"),
-      textWidth(selectedScan.location),
-      textWidth(selectedScan.date)
-    );
-    // star inner radius fits the widest text, outer a bit bigger
-    let innerR = longestLine * 0.75;
-    let outerR = innerR * 1.45;
+    // Typewriter logic
+    let fullText = "Location: " + selectedScan.location + "\n\nDate: " + selectedScan.date;
+    typewriterTimer++;
+    if(typewriterTimer % typewriterSpeed === 0 && typewriterIndex < fullText.length){
+      typewriterIndex++;
+    }
+    let displayText = fullText.substring(0, typewriterIndex);
+    let showCursor = floor(frameCount / 20) % 2 === 0;
 
-    // draw star
-    fill(255, panelAlpha);
-    stroke(0, panelAlpha);
-    strokeWeight(4);
-    drawStar(panelX, panelY, innerR, outerR, 7);
+    // Drop shadow
     noStroke();
+    fill(0, 40 * (panelAlpha / 255));
+    rect(boxX + 6, boxY + 6, boxW, boxH);
+
+    // Main box — white semi-transparent background
+    fill(255, 210 * (panelAlpha / 255));
+    stroke(0, panelAlpha);
+    strokeWeight(2);
+    rect(boxX, boxY, boxW, boxH);
+
+    // Title bar — city colour
+    let c = color(cityColor);
+    fill(red(c), green(c), blue(c), panelAlpha);
+    noStroke();
+    rect(boxX, boxY, boxW, titleBarH);
+
+    // Title bar text
     fill(0, panelAlpha);
-
-    // lay out text evenly within the inner radius
-    let lineH = innerR * 0.32;
-    let totalH = lineH * 4; // 5 lines, 4 gaps
-    let startY = panelY - totalH / 2;
-
-    textStyle(BOLD);
     textSize(13);
-    text("Scan Info", panelX, startY);
+    textStyle(BOLD);
+    textAlign(LEFT, CENTER);
+    text("INFO.exe", boxX + 10, boxY + titleBarH / 2);
 
+    // [x] button decoration
+    textAlign(RIGHT, CENTER);
+    text("[x]", boxX + boxW - 8, boxY + titleBarH / 2);
+
+    // Body text — typewriter + blinking cursor
+    textAlign(LEFT, TOP);
     textStyle(NORMAL);
     textSize(13);
-    text("Location:", panelX, startY + lineH);
-    text(selectedScan.location, panelX, startY + lineH * 2);
-    text("Date:", panelX, startY + lineH * 3);
-    text(selectedScan.date, panelX, startY + lineH * 4);
+    fill(0, panelAlpha);
+    let cursor = showCursor ? "_" : " ";
+    text(displayText + cursor, boxX + 16, boxY + titleBarH + 16);
+
+    // Reset alignment for everything else
+    textAlign(CENTER, CENTER);
   }
 
   // ---- Back button — no glow, hover just darkens ----
@@ -284,6 +292,8 @@ function mousePressed(){
           selectedScan = s;
           panelOpen = true;
           clickedOnScan = true;
+          typewriterIndex = 0; // reset typewriter on new scan click
+          typewriterTimer = 0;
         }
       }
       if(!clickedOnScan){
