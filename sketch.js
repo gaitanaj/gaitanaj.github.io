@@ -24,7 +24,7 @@ let typewriterSpeed = 2; // frames per character — lower = faster
 // City scans
 const cityScans = {
   copenhagen: [
-    {img: "scans/scan1.JPG", location: "Nørrebro kiosk", date: "March 2026"},
+    {img: "scans/scan1.JPG", location: "Nørrebro kiosk", date: "March 2026",},
     {img: "scans/scan2.JPG", location: "Vesterbro newsstand", date: "Feb 2026"},
     {img: "scans/scan3.JPG", location: "Central station shop", date: "Jan 2026"},
     {img: "scans/scan4.JPG", location: "Central station shop", date: "Jan 2026"},
