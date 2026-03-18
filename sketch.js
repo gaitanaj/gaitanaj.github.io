@@ -32,9 +32,9 @@ const cityScans = {
     {img: "scans/scan3.JPG", item: "Tabloid", location: "Central station shop", date: "Jan 13, 2026", refCode: "CPH-003"},
     {img: "scans/scan4.JPG", item: "RIFF Womans March Protest Chant Flyer", location: "Norrebro FolketHus", date: "Jan 20, 2026", refCode: "CPH-004"},
     {img: "scans/scan5.JPG", item: "Trashcan Texture", location: "Elmgade 5A Bus Stop", date: "Jan 27, 2026", refCode: "CPH-005"},
-   {img: "scans/scan6.JPG", item: "Trashcan Texture", location: "Elmgade 5A Bus Stop", date: "Jan 27, 2026", refCode: "CPH-005"},
-   {img: "scans/scan7.JPG", item: "Trashcan Texture", location: "Elmgade 5A Bus Stop", date: "Jan 27, 2026", refCode: "CPH-005"},
-  
+    {img: "scans/scan6.JPG", item: "Item", location: "Location", date: "Date", refCode: "CPH-006"},
+    {img: "scans/scan7.JPG", item: "Item", location: "Location", date: "Date", refCode: "CPH-007"},
+    {img: "scans/scan8.JPG", item: "Item", location: "Location", date: "Date", refCode: "CPH-008"},
   ],
   prague: [
     {img: "pscans/pscan1.JPG", item: "Tabloid", location: "Old Town Square", date: "March 1, 2026", refCode: "PRG-001"},
