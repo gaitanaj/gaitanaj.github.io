@@ -93,7 +93,10 @@ class Scan {
       drawingContext.shadowColor = "rgba(0,0,0,0.1)";
     }
     imageMode(CENTER);
-    image(this.img,0,0,this.size,this.size);
+    let aspect = this.img.width / this.img.height;
+    let iw = aspect >= 1 ? this.size : this.size * aspect;
+    let ih = aspect >= 1 ? this.size / aspect : this.size;
+    image(this.img, 0, 0, iw, ih);
     pop();
   }
 }
@@ -134,15 +137,15 @@ function drawMenu(){
   let cityY = centerY + 40;
   // Malmö shifted right by ~25px so visual gaps are equal despite "Copenhagen" being wider text
   let copenhagenX = centerX - 220; 
-  let malmoX      = centerX + 25;
+  let malmoX      = centerX + 21;
   let pragueX     = centerX + 220;
 
   // SCAN ARCHIVE — centered over all three cities
-  let headingX = (copenhagenX + pragueX) / 2;
+  let headingX = (copenhagenX + malmoX + pragueX) / 3;
   textSize(80);
   fill(0);
   textStyle(BOLD);
-  text("SCAN ARCHIVE", headingX - 15, centerY - 50);
+  text("SCAN ARCHIVE", headingX - 28, centerY - 50);
 
   // City names — normal weight
   textSize(40);
@@ -262,14 +265,7 @@ function drawCityWorld(){
     line(wireX1, wireY1, wireX2, wireY2);
     drawingContext.setLineDash([]);
 
-    // Node dots at wire endpoints
-    noStroke();
-    fill(red(c), green(c), blue(c), a);
-    circle(wireX1, wireY1, 12);
-    circle(wireX2, wireY2, 12);
-    fill(255, a);
-    circle(wireX1, wireY1, 5);
-    circle(wireX2, wireY2, 5);
+
 
     // ---- Image panel ----
     noStroke();
@@ -311,15 +307,27 @@ function drawCityWorld(){
     drawingContext.rect(imgAreaX, imgAreaY, imgAreaW, imgAreaH);
     drawingContext.clip();
 
+    // Letterbox: fit image within panel preserving aspect ratio
+    let imgAspect = selectedScan.img.width / selectedScan.img.height;
+    let fitW, fitH;
+    if(imgAspect > imgAreaW / imgAreaH){
+      fitW = imgAreaW;
+      fitH = imgAreaW / imgAspect;
+    } else {
+      fitH = imgAreaH;
+      fitW = imgAreaH * imgAspect;
+    }
+    let fitX = imgAreaX + (imgAreaW - fitW) / 2;
+    let fitY = imgAreaY + (imgAreaH - fitH) / 2;
+
     tint(255, a);
     imageMode(CORNER);
-    let zw = imgAreaW * imgZoom;
-    let zh = imgAreaH * imgZoom;
-    // Anchor zoom to mouse position within image
-    let mx = constrain(mouseX - imgAreaX, 0, imgAreaW);
-    let my = constrain(mouseY - imgAreaY, 0, imgAreaH);
-    let ox = imgAreaX - mx * (imgZoom - 1);
-    let oy = imgAreaY - my * (imgZoom - 1);
+    let zw = fitW * imgZoom;
+    let zh = fitH * imgZoom;
+    let mx = constrain(mouseX - fitX, 0, fitW);
+    let my = constrain(mouseY - fitY, 0, fitH);
+    let ox = fitX - mx * (imgZoom - 1);
+    let oy = fitY - my * (imgZoom - 1);
     image(selectedScan.img, ox, oy, zw, zh);
     noTint();
     drawingContext.restore();
