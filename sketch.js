@@ -29,12 +29,12 @@ const cityScans = {
   copenhagen: [
     {img: "scans/scan1.JPG", item: "PET ACT Flyer", location: "Refshaloen 2A Bus Stop", date: "March 14, 2026", refCode: "CPH-001"},
     {img: "scans/scan2.JPG", item: "RIFF Womans Protest Chant Flyer", location: "Norrebro Folkethus", date: "March 8, 2026", refCode: "CPH-002"},
-    {img: "scans/scan3.JPG", item: "Tabloid", location: "Central station shop", date: "Jan 13, 2026", refCode: "CPH-003"},
+    {img: "scans/scan3.JPG", item: "Anti-rascism sticker", location: "Elmgade 5C bus shelter wall", date: "March 18, 2026", refCode: "CPH-003"},
     {img: "scans/scan4.JPG", item: "RIFF Womans March Protest Chant Flyer", location: "Norrebro FolketHus", date: "Jan 20, 2026", refCode: "CPH-004"},
-    {img: "scans/scan5.JPG", item: "Trashcan Texture", location: "Elmgade 5A Bus Stop", date: "Jan 27, 2026", refCode: "CPH-005"},
-    {img: "scans/scan6.JPG", item: "Item", location: "Location", date: "Date", refCode: "CPH-006"},
-    {img: "scans/scan7.JPG", item: "Item", location: "Location", date: "Date", refCode: "CPH-007"},
-    {img: "scans/scan8.JPG", item: "Item", location: "Location", date: "Date", refCode: "CPH-008"},
+    {img: "scans/scan5.JPG", item: "Side texture", location: "Borgergade trashcan", date: "Jan 27, 2026", refCode: "CPH-005"},
+    {img: "scans/scan6.JPG", item: "Communist march poster", location: "Nuuks Plads bus stop", date: "March 17, 2026", refCode: "CPH-006"},
+    {img: "scans/scan7.JPG", item: "Zoned map of Copenhagen", location: "Jagtvej bike terminal", date: "March 17, 2026", refCode: "CPH-007"},
+    {img: "scans/scan8.JPG", item: "Page of tattoo artbook", location: "Soho House Copenhagen", date: "March 19, 2026", refCode: "CPH-008"},
   ],
   prague: [
     {img: "pscans/pscan1.JPG", item: "Tabloid", location: "Old Town Square", date: "March 1, 2026", refCode: "PRG-001"},
@@ -93,7 +93,7 @@ class Scan {
       drawingContext.shadowColor = "rgba(0,0,0,0.1)";
     }
     imageMode(CENTER);
-    let aspect = this.img.width / this.img.height;
+    let aspect = (this.img.width > 0 && this.img.height > 0) ? this.img.width / this.img.height : 1;
     let iw = aspect >= 1 ? this.size : this.size * aspect;
     let ih = aspect >= 1 ? this.size / aspect : this.size;
     image(this.img, 0, 0, iw, ih);
@@ -308,7 +308,7 @@ function drawCityWorld(){
     drawingContext.clip();
 
     // Letterbox: fit image within panel preserving aspect ratio
-    let imgAspect = selectedScan.img.width / selectedScan.img.height;
+    let imgAspect = (selectedScan.img.width > 0 && selectedScan.img.height > 0) ? selectedScan.img.width / selectedScan.img.height : 1;
     let fitW, fitH;
     if(imgAspect > imgAreaW / imgAreaH){
       fitW = imgAreaW;
